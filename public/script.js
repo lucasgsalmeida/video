@@ -15,7 +15,7 @@ function getScriptParams() {
 const { id, token } = getScriptParams();
 let dataUrl = "";
 
-async function fetchDataUrl() {
+async function fetchDataUrl(dataLayerData) {
     if (!id || !token) {
         console.error('ID ou Token não foram fornecidos na URL do script');
         return;
@@ -26,7 +26,7 @@ async function fetchDataUrl() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id, token })
+            body: JSON.stringify({ id, token, ...dataLayerData })
         });
         if (!response.ok) {
             throw new Error('Erro na solicitação da API');
@@ -38,6 +38,31 @@ async function fetchDataUrl() {
     } catch (error) {
         console.error('Erro na consulta do vídeo:', error);
     }
+}
+
+function getDataLayer() {
+    document.addEventListener("DOMContentLoaded", function () {
+        var dataLayer = window.dataLayer || [];
+        if (dataLayer.length > 0) {
+            var latestData = dataLayer[dataLayer.length - 1];
+            if (latestData.event === 'view_item') {
+                var ecommerceData = latestData.ecommerce;
+                var dataLayerData = {
+                    event: latestData.event,
+                    ecommerce: ecommerceData,
+                    uniqueEventId: latestData['gtm.uniqueEventId']
+                };
+                // Chama a função fetchDataUrl com os dados do dataLayer
+                fetchDataUrl(dataLayerData);
+            } else {
+                console.log('Evento não é view_item');
+                fetchDataUrl({});
+            }
+        } else {
+            console.log('dataLayer está vazio');
+            fetchDataUrl({});
+        }
+    });
 }
 
 function initializeVideo(url) {
@@ -226,5 +251,5 @@ function initializeVideo(url) {
     }
 }
 
-// Executa a função fetchDataUrl para obter a URL do vídeo e inicializar o vídeo
-fetchDataUrl();
+// Executa a função getDataLayer para obter os dados do dataLayer e iniciar o processo de fetch da URL do vídeo
+getDataLayer();
