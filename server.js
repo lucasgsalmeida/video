@@ -11,16 +11,6 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.post('/api/consultaVideo', async (req, res) => {
-    const { id, token } = req.body;
-    try {
-        const data = await ConsultaApi.consultaVideo(id, token);
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao consultar vídeo' });
-    }
-});
-
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 });

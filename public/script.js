@@ -21,7 +21,7 @@ async function fetchDataUrl(dataLayerData) {
         return;
     }
     try {
-        const response = await fetch('https://video.apollocompany.com.br/api/consultaVideo', {
+        const response = await fetch('https://integrador.apollocompany.com.br/webhook-test/8a4c54f0-a31b-4e88-a97e-7b4c01b158ba', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
